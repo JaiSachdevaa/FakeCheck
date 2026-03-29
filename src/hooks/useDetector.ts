@@ -13,7 +13,6 @@ interface DetectorState {
   history: PredictionResult[]
 }
 
-// Matches exactly what app.py /predict returns
 interface ApiResponse {
   model: string
   isFake: boolean
@@ -48,7 +47,6 @@ export function useDetector() {
     let result: PredictionResult
 
     try {
-      // ── Real Flask API ───────────────────────────────────────────────────
       const response = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,14 +65,16 @@ export function useDetector() {
         isFake:     data.isFake,
         confidence: Math.round(data.confidence),
         modelId:    state.selectedModel,
-        signals:    [],           // backend doesn't return signals — mock fills these
+        signals:    [],
         timestamp:  new Date(),
-        allResults: data.all,     // all 4 model results from API
+        allResults: data.all,
         source:     'api',
       }
 
+      // ── Save to localStorage so PerformancePage can read it
+      localStorage.setItem('fakecheck_last_result', JSON.stringify(result))
+
     } catch (apiErr) {
-      // ── Mock fallback (Flask offline) ────────────────────────────────────
       console.warn('Flask API unreachable, using local mock:', apiErr)
       await new Promise(res => setTimeout(res, 900))
 
@@ -82,6 +82,9 @@ export function useDetector() {
         ...analyzeText(state.text, state.selectedModel),
         source: 'mock',
       }
+
+      // ── Save to localStorage so PerformancePage can read it ──
+      localStorage.setItem('fakecheck_last_result', JSON.stringify(result))
     }
 
     setState(prev => ({
