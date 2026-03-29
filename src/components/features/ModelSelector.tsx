@@ -1,4 +1,4 @@
-import { MODEL_METRICS, MODELS } from '@/data/constants'
+import { MODELS } from '@/data/constants'
 import type { ModelId } from '@/types'
 import { cn } from '@/types/lib/utils'
 
@@ -15,7 +15,6 @@ export function ModelSelector({ selected, onChange }: ModelSelectorProps) {
       </p>
       <div className="grid grid-cols-1 gap-2">
         {MODELS.map(model => {
-          const metrics = MODEL_METRICS[model.id]
           const isSelected = selected === model.id
           return (
             <button
@@ -40,40 +39,16 @@ export function ModelSelector({ selected, onChange }: ModelSelectorProps) {
                   {model.short}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className={cn(
-                      'text-sm font-medium transition-colors',
-                      isSelected ? 'text-surface-100' : 'text-surface-300 group-hover:text-surface-200'
-                    )}>
-                      {model.label}
-                    </span>
-                    <span
-                      className="text-[11px] font-mono font-medium"
-                      style={{ color: model.color }}
-                    >
-                      {metrics.accuracy}%
-                    </span>
-                  </div>
+                  {/* No accuracy % shown here */}
+                  <span className={cn(
+                    'text-sm font-medium transition-colors block',
+                    isSelected ? 'text-surface-100' : 'text-surface-300 group-hover:text-surface-200'
+                  )}>
+                    {model.label}
+                  </span>
                   <span className="text-[11px] text-surface-500">{model.description}</span>
                 </div>
               </div>
-
-              {isSelected && (
-                <div className="mt-2.5 pt-2.5 border-t border-surface-700 grid grid-cols-3 gap-2">
-                  {[
-                    { label: 'F1', value: metrics.f1 },
-                    { label: 'Prec', value: metrics.precision },
-                    { label: 'Rec', value: metrics.recall },
-                  ].map(stat => (
-                    <div key={stat.label} className="text-center">
-                      <div className="text-[10px] text-surface-500 mb-0.5">{stat.label}</div>
-                      <div className="text-xs font-mono font-medium text-surface-200">
-                        {stat.value.toFixed(1)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </button>
           )
         })}

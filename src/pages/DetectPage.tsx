@@ -16,110 +16,75 @@ export function DetectPage() {
   }, [result])
 
   return (
-    <div className="relative min-h-screen">
+    <div>
+      {/* ── Hero ── */}
+      <div className="relative h-[320px] sm:h-[380px] overflow-hidden flex items-center">
+        <div className="absolute inset-0 z-0">
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={false}
+            smooth={true}
+          />
+        </div>
+        <div className="absolute inset-0 z-10 bg-surface-950/65" />
 
-      {/* ── LetterGlitch covers the ENTIRE page ── */}
-      <div className="fixed inset-0 z-0">
-        <LetterGlitch
-          glitchSpeed={50}
-          centerVignette={true}
-          outerVignette={false}
-          smooth={true}
-        />
+        <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 w-full">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              Detect fake news
+              <br />
+              <span className="gradient-text">with machine learning.</span>
+            </h1>
+            <p className="mt-4 text-surface-300 text-base sm:text-lg leading-relaxed max-w-xl">
+              Paste any article or headline. Our classifiers analyse linguistic
+              patterns, source signals, and writing style to determine authenticity.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Dark overlay for readability across the whole page */}
-      <div className="fixed inset-0 z-10 bg-surface-950/60" />
+      {/* ── Main content ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
 
-      {/* ── All page content sits above the bg ── */}
-      <div className="relative z-20">
-
-        {/* ── Hero ── */}
-        <div className="h-[360px] sm:h-[420px] flex items-center">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 w-full">
-            <div className="max-w-2xl">
-
-              {/* Pill badge */}
-              <div className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full border border-brand-700/50 bg-brand-900/30 backdrop-blur-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse-slow" />
-                <span className="text-xs font-medium text-brand-300 tracking-wide">
-                  ML-powered detection
-                </span>
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-                Detect fake news
-                <br />
-                <span className="gradient-text">with machine learning.</span>
-              </h1>
-
-              <p className="mt-4 text-surface-300 text-base sm:text-lg leading-relaxed max-w-xl">
-                Paste any article or headline. Our classifiers analyse linguistic
-                patterns, source signals, and writing style to determine authenticity.
-              </p>
-
-              {/* Stat pills */}
-              <div className="mt-6 flex flex-wrap gap-3">
-                {[
-                  { value: '96.3%', label: 'Best accuracy' },
-                  { value: '44.9K', label: 'Training samples' },
-                  { value: '4',     label: 'Classifiers' },
-                  { value: '<20ms', label: 'Avg inference' },
-                ].map(s => (
-                  <div
-                    key={s.label}
-                    className="px-3 py-1.5 rounded-lg bg-surface-900/70 border border-surface-700/60 backdrop-blur-sm"
-                  >
-                    <span className="font-mono text-sm font-semibold text-surface-100">{s.value}</span>
-                    <span className="text-surface-500 text-xs ml-1.5">{s.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Main content below hero ── */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
-
-            {/* Left — input + result */}
-            <div className="space-y-5">
-              <div className="glass-card p-5">
-                <ArticleInput
-                  text={text}
-                  selectedModel={selectedModel}
-                  isLoading={isLoading}
-                  onChange={setText}
-                  onAnalyze={analyze}
-                  onReset={reset}
-                />
-              </div>
-
-              {isLoading && (
-                <div className="glass-card p-5 animate-pulse space-y-3">
-                  <div className="h-4 bg-surface-800 rounded w-1/3" />
-                  <div className="h-4 bg-surface-800 rounded w-2/3" />
-                  <div className="h-4 bg-surface-800 rounded w-1/2" />
-                </div>
-              )}
-
-              {result && !isLoading && (
-                <div ref={resultRef}>
-                  <ResultCard result={result} />
-                </div>
-              )}
+          {/* Left — input + result */}
+          <div className="space-y-5">
+            {/* Input card — solid bg for contrast against glitch */}
+            <div className="rounded-2xl border border-surface-700 bg-surface-900 p-5 shadow-lg">
+              <ArticleInput
+                text={text}
+                selectedModel={selectedModel}
+                isLoading={isLoading}
+                onChange={setText}
+                onAnalyze={analyze}
+                onReset={reset}
+              />
             </div>
 
-            {/* Right — model selector */}
-            <aside>
-              <div className="glass-card p-4 sticky top-20">
-                <ModelSelector selected={selectedModel} onChange={setModel} />
+            {isLoading && (
+              <div className="rounded-2xl border border-surface-700 bg-surface-900 p-5 animate-pulse space-y-3 shadow-lg">
+                <div className="h-4 bg-surface-800 rounded w-1/3" />
+                <div className="h-4 bg-surface-800 rounded w-2/3" />
+                <div className="h-4 bg-surface-800 rounded w-1/2" />
               </div>
-            </aside>
-          </div>
-        </div>
+            )}
 
+            {result && !isLoading && (
+              <div ref={resultRef}>
+                <ResultCard result={result} />
+              </div>
+            )}
+          </div>
+
+          {/* Right — model selector */}
+          <aside>
+            {/* Solid bg for contrast */}
+            <div className="rounded-2xl border border-surface-700 bg-surface-900 p-4 sticky top-20 shadow-lg">
+              <ModelSelector selected={selectedModel} onChange={setModel} />
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   )

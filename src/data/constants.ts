@@ -59,26 +59,30 @@ export const SAMPLE_ARTICLES: SampleArticle[] = [
   {
     id: 1,
     label: 'Fake',
-    source: 'Unknown Blog',
-    text: 'BREAKING: Scientists confirm drinking lemon water every morning completely cures cancer. Big pharma is trying to suppress this discovery. Share before it gets deleted! This miracle cure has been hidden from the public for decades.',
+    source: 'Political Blog',
+    // Mirrors actual Fake.csv — sensational political blog language
+    text: "Donald Trump just destroyed the radical left with this one incredible move that the mainstream media refuses to cover. Democrats are furious and they don't want you to see this. Share before it gets deleted! The deep state is panicking.",
   },
   {
     id: 2,
     label: 'Real',
     source: 'Reuters',
-    text: 'The Federal Reserve raised its benchmark interest rate by a quarter percentage point on Wednesday, as policymakers continued their effort to lower inflation without triggering a recession, according to Federal Reserve officials who spoke after the meeting.',
+    // Mirrors actual True.csv — Reuters wire with city dateline + attribution
+    text: 'WASHINGTON (Reuters) - The U.S. Federal Reserve raised its benchmark interest rate by a quarter of a percentage point on Wednesday, bringing it to the highest level in years, as policymakers pressed on with their battle to bring down inflation, according to officials.',
   },
   {
     id: 3,
     label: 'Fake',
-    source: 'Social Media',
-    text: "Government is secretly installing 5G microchips inside COVID vaccines to track and control citizens. A whistleblower has revealed the shocking truth that the mainstream media refuses to cover. Wake up! They don't want you to know this.",
+    source: 'Conspiracy Site',
+    // Mirrors actual Fake.csv — health misinformation with whistleblower language
+    text: "Big pharma is paying doctors to hide this miracle cure from you. A whistleblower has exposed that a simple herb found in your kitchen completely destroys cancer cells. They are hiding this from the public. Wake up and share the truth!",
   },
   {
     id: 4,
     label: 'Real',
-    source: 'NASA',
-    text: "NASA's James Webb Space Telescope has captured the deepest and sharpest infrared image of the distant universe to date. The image shows thousands of galaxies in extraordinary detail, including the faintest objects ever observed, according to the space agency.",
+    source: 'Reuters',
+    // Mirrors actual True.csv — Reuters world news with institutional attribution
+    text: 'LONDON (Reuters) - British Prime Minister announced plans to increase defense spending to three percent of GDP by the end of the decade, according to a statement released by Downing Street on Thursday. Officials confirmed the budget would be presented to parliament next month.',
   },
 ]
 

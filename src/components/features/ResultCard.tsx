@@ -1,8 +1,8 @@
 import { Badge } from '@/components/ui/Badge'
 import { ConfidenceRing } from '@/components/ui/ConfidenceRing'
-import { MODELS } from '@/data/constants'
-import { cn } from '@/lib/utils'
+import { MODELS, MODEL_METRICS } from '@/data/constants'
 import type { PredictionResult } from '@/types'
+import { cn } from '@/types/lib/utils'
 
 interface ResultCardProps {
   result: PredictionResult
@@ -21,9 +21,9 @@ const REAL_EXPLANATIONS = [
 ]
 
 export function ResultCard({ result }: ResultCardProps) {
-  const model = MODELS.find(m => m.id === result.modelId)!
+  const model   = MODELS.find(m => m.id === result.modelId)!
+  const metrics = MODEL_METRICS[result.modelId]
 
-  // clamp index to 0-2 to avoid out-of-bounds
   const explanationIdx = Math.min(Math.floor(result.confidence / 34), 2)
   const explanation = result.isFake
     ? FAKE_EXPLANATIONS[explanationIdx]
@@ -32,10 +32,10 @@ export function ResultCard({ result }: ResultCardProps) {
   return (
     <div
       className={cn(
-        'rounded-2xl border p-5 animate-fade-up space-y-4',
+        'rounded-2xl border p-5 animate-fade-up space-y-4 shadow-lg',
         result.isFake
-          ? 'bg-danger-950/60 border-danger-800/50'
-          : 'bg-brand-950/60 border-brand-800/50'
+          ? 'bg-danger-950/80 border-danger-700/60'
+          : 'bg-brand-950/80 border-brand-700/60'
       )}
     >
       {/* ── Top row: ring + verdict ── */}
@@ -50,11 +50,8 @@ export function ResultCard({ result }: ResultCardProps) {
             <Badge variant="neutral" size="sm">
               {model.short} · {model.label}
             </Badge>
-            {/* Mock badge — shows when Flask is offline */}
             {result.source === 'mock' && (
-              <Badge variant="outline" size="sm">
-                ⚡ local mock
-              </Badge>
+              <Badge variant="outline" size="sm">⚡ local mock</Badge>
             )}
           </div>
 
@@ -74,9 +71,48 @@ export function ResultCard({ result }: ResultCardProps) {
         </div>
       </div>
 
-      {/* ── All-model comparison (only when real API responds) ── */}
+      {/* ── Selected model metrics only ── */}
+      <div className={cn(
+        'pt-4 border-t',
+        result.isFake ? 'border-danger-800/40' : 'border-brand-800/40'
+      )}>
+        <p className="text-[11px] font-medium text-surface-500 uppercase tracking-widest mb-3">
+          {model.label} — model accuracy
+        </p>
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { label: 'Accuracy',  value: metrics.accuracy },
+            { label: 'Precision', value: metrics.precision },
+            { label: 'Recall',    value: metrics.recall },
+            { label: 'F1 Score',  value: metrics.f1 },
+          ].map(stat => (
+            <div
+              key={stat.label}
+              className={cn(
+                'rounded-xl px-3 py-2.5 border text-center',
+                result.isFake
+                  ? 'bg-danger-900/30 border-danger-800/40'
+                  : 'bg-brand-900/30 border-brand-800/40'
+              )}
+            >
+              <div className={cn(
+                'text-[11px] font-mono font-semibold',
+                result.isFake ? 'text-danger-300' : 'text-brand-300'
+              )}>
+                {stat.value.toFixed(1)}%
+              </div>
+              <div className="text-[10px] text-surface-500 mt-0.5">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── All-model comparison (real API only) ── */}
       {result.allResults && (
-        <div className="pt-4 border-t border-surface-800/40">
+        <div className={cn(
+          'pt-4 border-t',
+          result.isFake ? 'border-danger-800/40' : 'border-brand-800/40'
+        )}>
           <p className="text-[11px] font-medium text-surface-500 uppercase tracking-widest mb-3">
             All classifiers
           </p>
@@ -93,10 +129,7 @@ export function ResultCard({ result }: ResultCardProps) {
                       : 'bg-brand-900/30 border-brand-800/40'
                   )}
                 >
-                  <div
-                    className="text-[10px] font-bold mb-1"
-                    style={{ color: m.color }}
-                  >
+                  <div className="text-[10px] font-bold mb-1" style={{ color: m.color }}>
                     {m.short}
                   </div>
                   <div className={cn(
@@ -117,7 +150,10 @@ export function ResultCard({ result }: ResultCardProps) {
 
       {/* ── Signal tags (mock only) ── */}
       {result.signals.length > 0 && (
-        <div className="pt-4 border-t border-surface-800/40">
+        <div className={cn(
+          'pt-4 border-t',
+          result.isFake ? 'border-danger-800/40' : 'border-brand-800/40'
+        )}>
           <p className="text-[11px] font-medium text-surface-500 uppercase tracking-widest mb-2">
             Detected signals
           </p>
