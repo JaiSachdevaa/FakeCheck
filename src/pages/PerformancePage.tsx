@@ -20,8 +20,8 @@ export function PerformancePage() {
     MODEL_METRICS[a.id].accuracy > MODEL_METRICS[b.id].accuracy ? a : b
   )
 
-  const lastResult = getStoredResult()
-  const lastModel  = lastResult ? MODELS.find(m => m.id === lastResult.modelId) : null
+  const lastResult  = getStoredResult()
+  const lastModel   = lastResult ? MODELS.find(m => m.id === lastResult.modelId) : null
   const lastMetrics = lastResult ? MODEL_METRICS[lastResult.modelId] : null
 
   return (
@@ -38,7 +38,7 @@ export function PerformancePage() {
         </p>
       </div>
 
-      {/*Last article result banner*/}
+      {/* Last article result banner */}
       {lastResult && lastModel && lastMetrics ? (
         <div
           className={cn(
@@ -77,10 +77,7 @@ export function PerformancePage() {
               </div>
             </div>
             <div className="text-right">
-              <div
-                className="font-mono text-3xl font-bold"
-                style={{ color: lastModel.color }}
-              >
+              <div className="font-mono text-3xl font-bold" style={{ color: lastModel.color }}>
                 {lastResult.confidence}%
               </div>
               <div className="text-[11px] text-surface-500">confidence</div>
@@ -104,10 +101,7 @@ export function PerformancePage() {
                     : 'bg-brand-900/30 border-brand-800/40'
                 )}
               >
-                <div
-                  className="text-[11px] font-mono font-semibold"
-                  style={{ color: lastModel.color }}
-                >
+                <div className="text-[11px] font-mono font-semibold" style={{ color: lastModel.color }}>
                   {stat.value.toFixed(1)}%
                 </div>
                 <div className="text-[10px] text-surface-500 mt-0.5">{stat.label}</div>
@@ -115,7 +109,7 @@ export function PerformancePage() {
             ))}
           </div>
 
-          {/* All classifiers comparison*/}
+          {/* All classifiers comparison */}
           {lastResult.allResults && (
             <div className={cn('pt-3 border-t', lastResult.isFake ? 'border-danger-800/40' : 'border-brand-800/40')}>
               <p className="text-[11px] font-medium text-surface-500 uppercase tracking-widest mb-3">
@@ -181,68 +175,11 @@ export function PerformancePage() {
         </div>
       )}
 
-      <PerformanceChart />
+      {/* ↓ Pass allResults so charts update per article instead of showing static metrics */}
+      <PerformanceChart allResults={lastResult?.allResults ?? null} />
 
-      {/* Metrics table */}
-      <div className="mt-8 glass-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-surface-800">
-          <h3 className="text-sm font-semibold text-surface-200">Full metrics table</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-surface-800">
-                {['Model', 'Accuracy', 'Precision', 'Recall', 'F1', 'Train time', 'Params'].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-[11px] font-medium text-surface-500 uppercase tracking-wider">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {MODELS.sort((a, b) => MODEL_METRICS[b.id].accuracy - MODEL_METRICS[a.id].accuracy)
-                .map((model, i) => {
-                  const m = MODEL_METRICS[model.id]
-                  const isUsed = lastResult?.modelId === model.id
-                  return (
-                    <tr
-                      key={model.id}
-                      className={cn(
-                        i % 2 === 0 ? 'bg-surface-900/20' : '',
-                        isUsed ? 'ring-1 ring-inset' : ''
-                      )}
-                      style={isUsed ? { '--tw-ring-color': model.color + '40' } as React.CSSProperties : {}}
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="w-6 h-6 rounded-md text-[10px] font-bold flex items-center justify-center flex-shrink-0"
-                            style={{ background: model.color + '20', color: model.color }}
-                          >
-                            {model.short}
-                          </span>
-                          <span className="text-surface-200 font-medium">{model.label}</span>
-                          {isUsed && (
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background: model.color + '20', color: model.color }}>
-                              used
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      {[m.accuracy, m.precision, m.recall, m.f1].map((val, j) => (
-                        <td key={j} className="px-4 py-3 font-mono text-surface-300">
-                          {val.toFixed(1)}%
-                        </td>
-                      ))}
-                      <td className="px-4 py-3 font-mono text-surface-400 text-xs">{m.trainTime}</td>
-                      <td className="px-4 py-3 font-mono text-surface-400 text-xs">{m.parameters}</td>
-                    </tr>
-                  )
-                })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      
+     
     </div>
   )
 }
