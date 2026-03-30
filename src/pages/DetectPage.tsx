@@ -17,7 +17,7 @@ export function DetectPage() {
 
   return (
     <div>
-      {/* ── Hero ── */}
+      {/*Hero*/}
       <div className="relative h-[320px] sm:h-[380px] overflow-hidden flex items-center">
         <div className="absolute inset-0 z-0">
           <LetterGlitch
@@ -44,13 +44,13 @@ export function DetectPage() {
         </div>
       </div>
 
-      {/* ── Main content ── */}
+      {/*Main content*/}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
 
-          {/* Left — input + result */}
+          {/* Left input + result */}
           <div className="space-y-5">
-            {/* Input card — solid bg for contrast against glitch */}
+            {/* Input card solid bg for contrast against glitch */}
             <div className="rounded-2xl border border-surface-700 bg-surface-900 p-5 shadow-lg">
               <ArticleInput
                 text={text}
@@ -77,7 +77,7 @@ export function DetectPage() {
             )}
           </div>
 
-          {/* Right — model selector */}
+          {/* Right model selector */}
           <aside>
             {/* Solid bg for contrast */}
             <div className="rounded-2xl border border-surface-700 bg-surface-900 p-4 sticky top-20 shadow-lg">

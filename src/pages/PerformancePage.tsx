@@ -8,7 +8,6 @@ function getStoredResult(): PredictionResult | null {
     const raw = localStorage.getItem('fakecheck_last_result')
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    // timestamp gets serialised as string — restore it
     parsed.timestamp = new Date(parsed.timestamp)
     return parsed as PredictionResult
   } catch {
@@ -39,7 +38,7 @@ export function PerformancePage() {
         </p>
       </div>
 
-      {/* ── Last article result banner ── */}
+      {/*Last article result banner*/}
       {lastResult && lastModel && lastMetrics ? (
         <div
           className={cn(
@@ -116,7 +115,7 @@ export function PerformancePage() {
             ))}
           </div>
 
-          {/* All classifiers comparison (only if API was used) */}
+          {/* All classifiers comparison*/}
           {lastResult.allResults && (
             <div className={cn('pt-3 border-t', lastResult.isFake ? 'border-danger-800/40' : 'border-brand-800/40')}>
               <p className="text-[11px] font-medium text-surface-500 uppercase tracking-widest mb-3">

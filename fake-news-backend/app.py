@@ -10,7 +10,7 @@ CORS(app)
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "models")
 
-# ── Load artefacts ─────────────────────────────────────────────────────────────
+# Load artefacts
 try:
     vectorizer = joblib.load(os.path.join(MODEL_DIR, "vectorizer.pkl"))
     models = {
@@ -26,7 +26,7 @@ except FileNotFoundError as e:
         "\n    Run  python train.py  first to generate the .pkl files.\n"
     )
 
-# ── Preprocessing — identical to notebook wordopt() ───────────────────────────
+# Preprocessing
 def wordopt(text: str) -> str:
     text = text.lower()
     text = re.sub(r'\[.*?\]', '', text)
@@ -46,7 +46,7 @@ def run_all_models(text: str) -> dict:
 
     results = {}
     for model_id, model in models.items():
-        pred = int(model.predict(vectorized)[0])   # 0 = Fake, 1 = Real
+        pred = int(model.predict(vectorized)[0])   
 
         if hasattr(model, "predict_proba"):
             proba      = model.predict_proba(vectorized)[0]
@@ -63,7 +63,7 @@ def run_all_models(text: str) -> dict:
     return results
 
 
-# ── Routes ─────────────────────────────────────────────────────────────────────
+# Routes
 
 @app.route("/", methods=["GET"])
 def health():
@@ -111,7 +111,7 @@ def predict():
         "isFake":     chosen["isFake"],
         "label":      chosen["label"],
         "confidence": chosen["confidence"],
-        "all":        all_results,      # frontend uses this for the 4-model grid
+        "all":        all_results,     
     })
 
 
