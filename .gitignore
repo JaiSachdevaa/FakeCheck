@@ -8,3 +8,4 @@ True_original_backup.csv
 *.egg-info/
 dist/
 .DS_Store
+node_modules/
