@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fakecheck-api
+    runtime: python
+    rootDir: fake-news-backend
+    buildCommand: pip install -r requirements.txt && python augment.py && python train.py
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ALLOWED_ORIGINS
+        value: https://vercel-app.vercel.app
