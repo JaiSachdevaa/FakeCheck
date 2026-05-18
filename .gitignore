@@ -1,7 +1,10 @@
-node_modules/
-dist/
-.env
 venv/
 __pycache__/
 *.pyc
+*.pyo
+.env
+models/*.pkl
+True_original_backup.csv
+*.egg-info/
+dist/
 .DS_Store

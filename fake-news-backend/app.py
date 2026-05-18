@@ -6,7 +6,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+
+# ── CORS: allow your Vercel frontend URL ─────────────────────────────────────
+ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
+CORS(app, origins=ALLOWED_ORIGINS)
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "models")
 
@@ -29,24 +32,18 @@ except FileNotFoundError as e:
 # ── Preprocessing (MUST match train.py exactly) ───────────────────────────────
 def wordopt(text: str) -> str:
     text = text.lower()
-    # Strip Reuters/AP datelines like "WASHINGTON (Reuters) -"
     text = re.sub(r'^[a-z\s,\.]+\([^)]+\)\s*[-–—]\s*', '', text)
-    # Strip bylines like "by john smith"
     text = re.sub(r'\bby [a-z]+ [a-z]+\b', '', text)
-    # Strip URLs and HTML before anything else
     text = re.sub(r'https?://\S+|www\.\S+', '', text)
     text = re.sub(r'<.*?>+', '', text)
     text = re.sub(r'\[.*?\]', '', text)
-    # Remove mixed alphanumeric codes (e.g. "h1b", "covid19") but KEEP plain numbers
     text = re.sub(r'\b(?=[a-z]+\d|\d+[a-z])[a-z0-9]+\b', '', text)
-    # Strip punctuation (space so words don't merge)
     text = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
 # ── Core prediction logic ─────────────────────────────────────────────────────
 def run_all_models(text: str) -> dict:
-    """Vectorise text and run all four classifiers."""
     cleaned    = wordopt(text)
     vectorized = vectorizer.transform([cleaned])
 
@@ -75,24 +72,6 @@ def health():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    """
-    POST body:  { "text": "...", "model": "rf" }
-                model defaults to "rf", options: lr | dt | gb | rf
-
-    Response:
-    {
-      "model": "rf",
-      "isFake": true,
-      "label": "Fake",
-      "confidence": 94.2,
-      "all": {
-        "lr": { "isFake": true,  "label": "Fake", "confidence": 98.1, "prediction": 0 },
-        "dt": { ... },
-        "gb": { ... },
-        "rf": { ... }
-      }
-    }
-    """
     body = request.get_json(silent=True)
     if not body or "text" not in body:
         return jsonify({"error": "Missing 'text' field in request body"}), 400
@@ -104,7 +83,7 @@ def predict():
         return jsonify({"error": "Text cannot be empty"}), 400
 
     if len(text.split()) < 5:
-        return jsonify({"error": "Text too short — please provide at least a sentence"}), 400
+        return jsonify({"error": "Text too short - please provide at least a sentence"}), 400
 
     if model_id not in models:
         return jsonify({"error": f"Unknown model '{model_id}'. Use: {list(models.keys())}"}), 400
@@ -123,7 +102,6 @@ def predict():
 
 @app.route("/predict/all", methods=["POST"])
 def predict_all():
-    """Run all four models and return all results."""
     body = request.get_json(silent=True)
     if not body or "text" not in body:
         return jsonify({"error": "Missing 'text' field"}), 400
@@ -136,4 +114,5 @@ def predict_all():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # debug=False in production — gunicorn handles this anyway
+    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
