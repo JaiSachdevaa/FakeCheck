@@ -1,5 +1,5 @@
 import type { AllModelResults, ModelId, PredictionResult } from '@/types'
-import { analyzeText } from '@/types/lib/utils'
+import { analyzeText } from '@/lib/utils'
 import { useCallback, useState } from 'react'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000'
@@ -71,7 +71,6 @@ export function useDetector() {
         source:     'api',
       }
 
-      // ── Save to localStorage so PerformancePage can read it
       localStorage.setItem('fakecheck_last_result', JSON.stringify(result))
 
     } catch (apiErr) {
@@ -83,7 +82,6 @@ export function useDetector() {
         source: 'mock',
       }
 
-      // ── Save to localStorage so PerformancePage can read it ──
       localStorage.setItem('fakecheck_last_result', JSON.stringify(result))
     }
 
