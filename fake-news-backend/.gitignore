@@ -1,7 +1,5 @@
 __pycache__/
 *.py[cod]
-*.pkl
-models/
 .env
 venv/
 .venv/
